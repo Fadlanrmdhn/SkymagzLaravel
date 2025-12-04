@@ -11,7 +11,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/9.1.0/mdb.min.css" rel="stylesheet" />
 </head>
 
-<body class="bg-light">
+<body class="bg-light" style="overflow-y: hidden;">
 
     <div class="container-fluid">
         <div class="row min-vh-100 d-flex align-items-center">
