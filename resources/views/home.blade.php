@@ -43,16 +43,16 @@
                             <img src="{{ asset('images/carousel1.png') }}" class=" w-100 rounded-6"
                                 style="object-fit: cover; height: 300px;" alt="Wild Landscape" />
                             <div class="carousel-caption d-none d-md-block">
-                                <h5>First slide label</h5>
-                                <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                                <h5>Bisa Mengakses Buku Dimana Saja</h5>
+                                <p>Dengan SkyMagz Semua Bisa Membaca Buku Dimana Saja</p>
                             </div>
                         </div>
                         <div class="carousel-item">
                             <img src="{{ asset('images/carousel2.png') }}" class=" w-100 rounded-6"
                                 style="object-fit: cover; height: 300px;" alt="Camera" />
                             <div class="carousel-caption d-none d-md-block">
-                                <h5>Second slide label</h5>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                                <h5>Di SkyMagz Banyak Promo</h5>
+                                <p>Dengan SkyMagz Membeli Ebook Dengan Harga Murah</p>
                             </div>
                         </div>
                         <div class="carousel-item">
@@ -89,9 +89,9 @@
         <div class="d-flex justify-content-center">
             <div class="d-flex justify-content-center border border-4 border-primary w-25 pt-2"
                 style="border-radius: 5rem;">
-                <h5 class="text-dark fw-bold  align-items-center"><i
-                        class="fa-solid fa-book-open mx-1 text-primary"></i>Kategori<i
-                        class="fa-solid fa-book-open mx-1 text-primary"></i></h5>
+                <h5 class="text-dark fw-bold  align-items-center">
+                    <i class="fa-solid fa-book-open mx-1 text-primary"></i>Kategori
+                    <iclass="fa-solid fa-book-open mx-1 text-primary"></iclass=></h5>
             </div>
         </div>
 
@@ -148,7 +148,7 @@
                         style="width: 20rem; border-radius: 1rem; margin-top: 0.5rem; max-width:100%; height:auto;">
                 </div>
                 <div class="d-flex align-items-start" style="white-space: nowrap;">
-                    <a href="" class="text-secondary fw-bold mt-1">Lihat Semua</a>
+                    <a href="{{ route('allbook') }}" class="text-secondary fw-bold mt-1">Lihat Semua</a>
                 </div>
 
                 <!-- Kartu kanan (rapih, ukuran seragam, tidak terlalu panjang) -->
@@ -193,36 +193,42 @@
         {{-- end card buku --}}
 
         {{-- card majalah --}}
-        <div class="mt-5 d-flex justify-content-between">
-            <div class="d-flex align-items-start gap-3 mt-4 flex-wrap">
+        <div class="mt-2 d-flex justify-content-between m-0">
+            <div class="d-flex gap-3 mt-4">
 
                 <!-- Kartu kiri -->
                 <div class="rounded-4 shadow-sm d-flex flex-column align-items-center justify-content-start">
                     <button class="w-75 rounded-6 border-0 fw-bold" style="background-color: yellow">Majalah</button>
                     <img src="{{ asset('images/Majalah.png') }}" alt="Orang"
-                        style="width: 14rem; border-radius: 1rem; margin-top: 0.5rem;">
+                        style="width: 27rem; border-radius: 1rem; margin-top: 0.5rem; max-width:100%; height:auto;">
+                </div>
+                <div class="d-flex align-items-start" style="white-space: nowrap;">
+                    <a href="{{ route('allmagazine') }}" class="text-secondary fw-bold mt-1">Lihat Semua</a>
                 </div>
 
-                <!-- Kartu kanan -->
-                <div class="d-flex gap-3 flex-wrap border border-2 border-primary rounded-4 swiper mySwiper"
-                    style="margin-left: -3rem; margin-top: 2.5rem;">
-                    <div class="swiper-wrapper">
+                <!-- Kartu kanan (rapih, ukuran seragam, tidak terlalu panjang) -->
+                <div class="d-flex gap-2 rounded-4 swiper mySwiper w-100"
+                    style="margin-left: -12rem; margin-top: 2.5rem; ">
+                    <div class="swiper-wrapper" style="align-items: flex-start;">
                         @foreach ($magazines as $item)
                             <a href="{{ route('detail.show', $item->id) }}"
-                                class="card shadow-sm border-primary border-1 rounded-4 text-decoration-none swiper-slide">
+                                class="card shadow-sm text-decoration-none swiper-slide d-flex flex-column align-items-center"
+                                style="min-width: 10rem; max-width: 10rem; box-sizing: border-box; border: solid 3px;">
                                 <img src="{{ asset('storage/' . $item['cover']) }}" alt="{{ $item['title'] }}"
-                                    class="card-img-top p-2 d-flex justify-content-center"
-                                    style="width: 8rem; height: 11rem; margin:auto;" />
-                                <div class="p-2">
-                                    <div class="d-flex gap-2">
-                                        <span class="badge bg-primary">Digital</span>
-                                        <span class="badge bg-success">PDF</span>
+                                    class="card-img-top"
+                                    style="width: 7rem; height: 10rem; object-fit: cover; margin: 0.75rem auto 0; border-radius: 0.5rem; max-width:100%;" />
+                                <div class="p-2 w-100">
+                                    <div class="d-flex justify-content-start gap-1 mb-1">
+                                        <span class="badge bg-primary small">Digital</span>
+                                        <span class="badge bg-success small">PDF</span>
                                     </div>
-                                    <p class="mb-0 fw-light mt-1" style="font-size: small;">{{ $item->short_title }}</p>
-                                    <p class="mb-1" style="font-size: small; font-weight: 500;">
+                                    <p class="mb-0 fw-light mt-1 text-truncate" style="font-size: 0.85rem;">
+                                        {{ $item->short_title }}
+                                    </p>
+                                    <p class="mb-1 text-truncate" style="font-size: 0.85rem; font-weight: 500;">
                                         {{ $item->short_author }}
                                     </p>
-                                    <div style="font-size: small; font-weight: 700;">
+                                    <div style="font-size: 0.9rem; font-weight: 700;">
                                         Rp. {{ number_format($item['price'], 0, ',', ',') }}
                                     </div>
                                 </div>
@@ -230,15 +236,14 @@
                         @endforeach
                     </div>
                     <!-- Tombol Navigasi -->
-                    <div class="swiper-button-next fs-bold text-dark bg-light p-4"
-                        style="border-radius: 5rem; border: solid 2px;">
-                    </div>
-                    <div class="swiper-button-prev fs-bold text-dark bg-light p-4"
-                        style="border-radius: 5rem; border: solid 2px;">
-                    </div>
+                    <div class="swiper-button-next fs-bold text-dark bg-light p-3"
+                        style="border-radius: 5rem; border: solid 2px;"></div>
+                    <div class="swiper-button-prev fs-bold text-dark bg-light p-3"
+                        style="border-radius: 5rem; border: solid 2px;"></div>
                 </div>
             </div>
-            <a href="" class="text-secondary fw-bold mt-4">Lihat Semua</a>
+
+
         </div>
         {{-- end card majalah --}}
 

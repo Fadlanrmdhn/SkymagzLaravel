@@ -20,10 +20,13 @@ Route::get('/detail/{id}', [MagazineController::class, 'show'])->name('detail.sh
 Route::get('/category/{id}/books', [MagazineController::class, 'booksByCategory'])->name('category.books');
 
 
+// show all book
 Route::get('/allbook', [MagazineController::class, 'allBooks'])->name('allbook');
-
-// Show all magazines (public)
+// Show all magazine
 Route::get('/allmagazine', [MagazineController::class, 'allMagazines'])->name('allmagazine');
+// show all catalog
+Route::get('/catalog', [MagazineController::class, 'allCatalog'])->name('catalog');
+
 // ========== CART ROUTES ==========
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
 Route::get('/cart', [CartController::class, 'showCart'])->name('cart');

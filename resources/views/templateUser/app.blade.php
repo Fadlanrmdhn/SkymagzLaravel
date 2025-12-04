@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,10 +56,10 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <li>
-                                        <a class="dropdown-item" href="#">Buku</a>
+                                        <a class="dropdown-item" href="{{ route('allbook') }}">Buku</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">Majalah</a>
+                                        <a class="dropdown-item" href="{{ route('allmagazine') }}">Majalah</a>
                                     </li>
                                 </ul>
                             </li>
@@ -72,13 +69,16 @@
                 <!-- Left links -->
 
                 {{-- search center --}}
-                <div class="input-group rounded w-50 me-auto mb-2 mb-lg-0">
-                    <span class="input-group-text bg-white border-end-0" style=" border-radius: 13px 0 0 13px;">
-                        <i class="fas fa-search text-secondary"></i>
-                    </span>
-                    <input type="text" class="form-control border-start-0" style=" border-radius: 0 13px 13px 0;"
-                        placeholder="Search...">
-                </div>
+                <form action="{{ route('catalog') }}" method="GET" class="d-flex w-50 me-auto mb-2 mb-lg-0">
+                    <div class="input-group rounded">
+                        <span class="input-group-text bg-white border-end-0" style="border-radius: 13px 0 0 13px; cursor: pointer;">
+                            <button type="submit" class="btn btn-link p-0 m-0 text-secondary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </span>
+                        <input type="text" name="q" class="form-control border-start-0" style="border-radius: 0 13px 13px 0;" placeholder="Search books or magazines..." value="{{ request('q') }}">
+                    </div>
+                </form>
                 {{-- search center --}}
 
                 {{-- cart shooping --}}
@@ -117,16 +117,16 @@
             <div class="collapse navbar-collapse" id="navbarExample01">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item active">
-                        <a class="nav-link" aria-current="page" href="#">Home</a>
+                        <a class="nav-link" aria-current="page" href="{{ route('home') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
+                        <a class="nav-link" href="{{ route('allbook') }}">Buku</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
+                        <a class="nav-link" href="{{ route('allmagazine') }}">Majalah</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link" href="{{ route('catalog') }}">Katalog</a>
                     </li>
                 </ul>
             </div>
@@ -237,4 +237,4 @@
     @endif
 </script>
 
-</html>
+</span>

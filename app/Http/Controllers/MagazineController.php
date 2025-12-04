@@ -97,6 +97,26 @@ class MagazineController extends Controller
         return view('allmagazine', compact('magazines'));
     }
 
+    /**
+     * Show all catalog (books and magazines) with search functionality
+     */
+    public function allCatalog(Request $request)
+    {
+        $query = $request->input('q');
+
+        if ($query) {
+            $magazines = Magazine::where('title', 'like', '%' . $query . '%')
+                ->orWhere('author', 'like', '%' . $query . '%')
+                ->orWhere('description', 'like', '%' . $query . '%')
+                ->latest()
+                ->get();
+        } else {
+            $magazines = Magazine::latest()->get();
+        }
+
+        return view('allcatalog', compact('magazines', 'query'));
+    }
+
     public function show($id)
     {
         $magazine = Magazine::with('categories')->find($id);
