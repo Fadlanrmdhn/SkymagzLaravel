@@ -64,7 +64,7 @@
                     </div>
 
                     <!-- Submit button -->
-                    <button type="submit" class="btn btn-primary w-100 mb-4">Sign in</button>
+                    <button type="submit" class="btn btn-primary w-100 mb-4">Sign Up</button>
 
                     <!-- Register buttons -->
                     <div class="text-center">
