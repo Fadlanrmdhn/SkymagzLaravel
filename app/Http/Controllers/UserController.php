@@ -23,6 +23,32 @@ class UserController extends Controller
         //compact -> argumen pada fungsi akakn sama dengan nama variabel yang akna dikirim ke blade
     }
 
+    public function count()
+    {
+        $countUser = User::count();
+        return view('admin.dashboard', compact('countUser'));
+    }
+
+    public function chartData()
+    {
+        $monthlyUsers = User::selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as count')
+            ->where('created_at', '>=', now()->subMonths(12))
+            ->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        $userCounts = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $count = $monthlyUsers->where('month', $date->month)->where('year', $date->year)->first()->count ?? 0;
+            $userCounts[] = $count;
+        }
+        return view('admin.dashboard', compact(
+            'userCount',
+        ));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -255,23 +281,23 @@ class UserController extends Controller
     {
         $users = User::orderBy('role', 'asc');
         return DataTables::of($users)
-        ->addIndexColumn()
-        ->addColumn('role', function($user) {
-            if ($user['role'] == 'admin'){
-                return '<span class="badge bg-success">admin</span>';
-            } else{
-                return '<span class="badge bg-secondary">User</span>';
-            }
-        })
-        ->addColumn('action', function($user){
-            $btnEdit =  '<a href="' . route('admin.users.edit', $user->id) . '" class="btn btn-primary">Edit</a>';
-            $btnDelete = ' <form action="' . route('admin.users.delete', $user->id) . '" method="POST" style="display: inline-block;">
-                            ' . csrf_field() . method_field('DELETE') .'
+            ->addIndexColumn()
+            ->addColumn('role', function ($user) {
+                if ($user['role'] == 'admin') {
+                    return '<span class="badge bg-success">admin</span>';
+                } else {
+                    return '<span class="badge bg-secondary">User</span>';
+                }
+            })
+            ->addColumn('action', function ($user) {
+                $btnEdit =  '<a href="' . route('admin.users.edit', $user->id) . '" class="btn btn-primary">Edit</a>';
+                $btnDelete = ' <form action="' . route('admin.users.delete', $user->id) . '" method="POST" style="display: inline-block;">
+                            ' . csrf_field() . method_field('DELETE') . '
                             <button type="submit" class="btn btn-danger me-2">Hapus</button>
                         </form>';
-            return '<div class="d-flex justify-content-center align-items-center gap-2">' . $btnEdit . $btnDelete . '</div>';
-        })
-        ->rawColumns(['role', 'action'])
-        ->make(true);
+                return '<div class="d-flex justify-content-center align-items-center gap-2">' . $btnEdit . $btnDelete . '</div>';
+            })
+            ->rawColumns(['role', 'action'])
+            ->make(true);
     }
 }

@@ -55,8 +55,7 @@
                     </div>
                     <div class="col-6">
                         <label for="type" class="form-label">Tipe</label>
-                        <select name="type" id="type" class="form-control" required>
-                            <option disabled selected>-- Pilih Tipe --</option>
+                        <select name="type" id="type" class="form-control">
                             <option value="majalah" {{ old('type') == 'majalah' ? 'selected' : '' }}>Majalah</option>
                         </select>
                         @error('type')

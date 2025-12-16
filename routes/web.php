@@ -7,6 +7,7 @@ use App\Http\Controllers\PromoController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\DashboardController;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Magazine;
@@ -60,7 +61,11 @@ Route::middleware('isGuest')->group(function () {
 Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::middleware('isAdmin')->prefix('/admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // chartjs
+    Route::get('charts/orders', [DashboardController::class, 'ordersChartData'])->name('charts.orders');
+    Route::get('charts/users', [DashboardController::class, 'usersChartData'])->name('charts.users');
+    Route::get('charts/categories', [DashboardController::class, 'categoriesChartData'])->name('charts.categories');
 
     // ========== USERS ==========
     Route::prefix('/users')->name('users.')->group(function () {

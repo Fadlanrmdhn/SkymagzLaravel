@@ -143,7 +143,7 @@ class CartController extends Controller
         $user = Auth::user();
         $promos = Promo::where('activated', true)->get();
 
-        // If coming from cart with promo query params, prefill selection
+        
         $selectedPromoId = $request->query('promo_id');
         $initialPromoDiscount = 0;
         if ($selectedPromoId) {
@@ -214,7 +214,6 @@ class CartController extends Controller
             'order_date' => now(),
             'total_amount' => $finalTotal,
             'status' => 'pending', // pending, paid, shipped, completed, cancelled
-            'promo_amount' => $promoAmount,
         ];
 
         if ($promoId) {

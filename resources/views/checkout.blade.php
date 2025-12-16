@@ -9,7 +9,6 @@
 
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
-                    @if(!empty($cart) && count($cart) > 0)
                         <table class="table table-sm">
                             <thead>
                                 <tr>
@@ -38,7 +37,6 @@
                                 </tr>
                             </tfoot>
                         </table>
-                    @endif
                 </div>
             </div>
         </div>
@@ -72,23 +70,26 @@
 
                         <!-- Promo Selection -->
                         <div class="mb-4">
-                            <label for="promo_select" class="form-label">Pilih Promo (Opsional)</label>
-                            <select class="form-select" id="promo_select">
-                                <option value="">-- Tidak ada promo --</option>
-                                @foreach($promos as $promo)
-                                    <option value="{{ $promo->id }}" data-discount="{{ $promo->discount }}" data-type="{{ $promo->type }}">
-                                        {{ $promo->promo_code }}
-                                        @if($promo->type === 'percent')
-                                            ({{ $promo->discount }}% Off)
-                                        @else
-                                            (Rp {{ number_format($promo->discount, 0, ',', '.') }})
-                                        @endif
-                                    </option>
-                                @endforeach
-                            </select>
+                            <label for="promo_id" class="form-label">Pilih Promo (Opsional)</label>
+                            <div class="d-flex gap-2">
+                                <select class="form-select" name="promo_id" id="promo_id" onchange="applyPromo()">
+                                    <option value="">-- Tidak ada promo --</option>
+                                    @foreach($promos as $promo)
+                                        <option value="{{ $promo->id }}" {{ $selectedPromoId == $promo->id ? 'selected' : '' }}>
+                                            {{ $promo->promo_code }}
+                                            @if(str_contains(strtolower($promo->type), 'perc'))
+                                                ({{ $promo->discount }}% Off)
+                                            @else
+                                                (Rp {{ number_format($promo->discount, 0, ',', '.') }})
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <button type="button" class="btn btn-outline-primary" onclick="applyPromo()">Terapkan</button>
+                            </div>
                         </div>
-                        <input type="hidden" id="promoDiscount" name="promo_discount" value="0">
-                        <input type="hidden" id="promoId" name="promo_id" value="">
+                        <input type="hidden" name="promo_discount" id="promo_discount" value="{{ $initialPromoDiscount }}">
+                        <input type="hidden" name="promo_id_hidden" id="promo_id_hidden" value="{{ $selectedPromoId }}">
 
                         <!-- Payment Method -->
                         <div class="mb-4">
@@ -136,16 +137,16 @@
                         <div class="alert alert-info">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Subtotal:</span>
-                                <span id="subtotalDisplay">Rp {{ number_format($total, 0, ',', '.') }}</span>
+                                <span id="subtotal">Rp {{ number_format($total, 0, ',', '.') }}</span>
                             </div>
-                            <div class="d-flex justify-content-between" id="discountRow" style="display: none;">
-                                <span>Diskon (<span id="promoCodeDisplay"></span>):</span>
-                                <span id="discountDisplay"></span>
+                            <div class="d-flex justify-content-between" id="discount_row" style="display: {{ $initialPromoDiscount > 0 ? 'flex' : 'none' }};">
+                                <span id="promo_code_display">Diskon (@if($selectedPromoId) {{ $promos->find($selectedPromoId)->promo_code ?? '' }} @endif):</span>
+                                <span class="text-danger" id="discount_amount">-Rp {{ number_format($initialPromoDiscount, 0, ',', '.') }}</span>
                             </div>
-                            <hr class="my-2" id="dividerLine">
+                            <hr class="my-2" id="discount_hr" style="display: {{ $initialPromoDiscount > 0 ? 'block' : 'none' }};">
                             <div class="d-flex justify-content-between">
                                 <strong>Total Pembayaran:</strong>
-                                <strong id="totalDisplay">Rp {{ number_format($total, 0, ',', '.') }}</strong>
+                                <strong id="total_payment">Rp {{ number_format($total - $initialPromoDiscount, 0, ',', '.') }}</strong>
                             </div>
                         </div>
 
@@ -165,82 +166,59 @@
     </div>
 </div>
 
-@push('scripts')
+
+@endsection
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const subtotal = {{ $total }};
-    const initialPromoId = '{{ $selectedPromoId ?? '' }}';
-    const initialPromoDiscount = {{ $initialPromoDiscount ?? 0 }};
-    const promoSelect = document.getElementById('promo_select');
-    const promoDiscountField = document.getElementById('promoDiscount');
-    const promoIdField = document.getElementById('promoId');
-    const subtotalDisplay = document.getElementById('subtotalDisplay');
-    const discountDisplay = document.getElementById('discountDisplay');
-    const promoCodeDisplay = document.getElementById('promoCodeDisplay');
-    const discountRow = document.getElementById('discountRow');
-    const totalDisplay = document.getElementById('totalDisplay');
+    const promos = @json($promos);
+    const total = {{ $total }};
 
-    function formatRupiah(num) {
-        return new Intl.NumberFormat('id-ID').format(num);
-    }
+    function applyPromo() {
+        const promoId = document.getElementById('promo_id').value;
+        const promoDiscountInput = document.getElementById('promo_discount');
+        const promoIdHidden = document.getElementById('promo_id_hidden');
+        const discountRow = document.getElementById('discount_row');
+        const discountHr = document.getElementById('discount_hr');
+        const promoCodeDisplay = document.getElementById('promo_code_display');
+        const discountAmount = document.getElementById('discount_amount');
+        const totalPayment = document.getElementById('total_payment');
 
-    function updateTotal(discount = 0) {
-        const total = Math.max(subtotal - discount, 0);
-        promoDiscountField.value = discount;
-        subtotalDisplay.textContent = 'Rp ' + formatRupiah(subtotal);
-           if (discount > 0) {
-              discountDisplay.innerHTML = '<span class="text-danger">-Rp ' + formatRupiah(discount) + '</span>';
-           }
-           totalDisplay.textContent = 'Rp ' + formatRupiah(total);
+        let discount = 0;
+        let promoCode = '';
 
+        if (promoId) {
+            const promo = promos.find(p => p.id == promoId);
+            if (promo) {
+                promoCode = promo.promo_code;
+                if (promo.type.toLowerCase().includes('perc')) {
+                    discount = Math.floor((total * promo.discount) / 100);
+                } else {
+                    discount = Math.min(promo.discount, total);
+                }
+            }
+        }
+
+        // Update hidden fields
+        promoDiscountInput.value = discount;
+        promoIdHidden.value = promoId;
+
+        // Update display
         if (discount > 0) {
+            promoCodeDisplay.textContent = `Diskon (${promoCode}):`;
+            discountAmount.textContent = `-Rp ${discount.toLocaleString('id-ID')}`;
             discountRow.style.display = 'flex';
+            discountHr.style.display = 'block';
         } else {
             discountRow.style.display = 'none';
+            discountHr.style.display = 'none';
         }
+
+        const finalTotal = total - discount;
+        totalPayment.textContent = `Rp ${finalTotal.toLocaleString('id-ID')}`;
     }
 
-    promoSelect.addEventListener('change', function () {
-        const selectedOption = promoSelect.options[promoSelect.selectedIndex];
-
-        if (!selectedOption.value) {
-            // No promo selected
-            promoIdField.value = '';
-            promoCodeDisplay.textContent = '';
-            updateTotal(0);
-            return;
-        }
-
-        const discount = parseInt(selectedOption.dataset.discount) || 0;
-        const type = selectedOption.dataset.type || '';
-        const promoCode = selectedOption.text.split(' ')[0];
-
-        // Calculate discount: support several type names (percent, percentage, fixed, amount)
-        let finalDiscount = 0;
-        const t = type.toString().toLowerCase();
-        if (t.includes('perc')) {
-            finalDiscount = Math.floor((subtotal * discount) / 100);
-        } else {
-            finalDiscount = Math.min(discount, subtotal);
-        }
-
-        promoIdField.value = selectedOption.value;
-        promoCodeDisplay.textContent = promoCode;
-        updateTotal(finalDiscount);
+    // Apply promo on page load if selected
+    document.addEventListener('DOMContentLoaded', function() {
+        applyPromo();
     });
-
-    // If nav from cart included a promo, pre-select it and update totals
-    if (initialPromoId) {
-        const opt = Array.from(promoSelect.options).find(o => o.value === initialPromoId);
-        if (opt) {
-            promoSelect.value = initialPromoId;
-            promoIdField.value = initialPromoId;
-            // set promo code display
-            promoCodeDisplay.textContent = opt.text.split(' ')[0];
-            updateTotal(initialPromoDiscount);
-        }
-    }
-});
 </script>
-@endpush
-@endsection

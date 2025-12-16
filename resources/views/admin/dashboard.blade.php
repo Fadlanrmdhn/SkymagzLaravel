@@ -18,31 +18,31 @@
                 <div class="card bg-primary text-white">
                     <div class="card-body">
                         <h5 class="card-title">Total Users</h5>
-                        <h2>{{ $userCount }}</h2>
+                        <h2>{{ $countUser }}</h2>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-success text-white">
+                <div class="card bg-primary text-white">
                     <div class="card-body">
                         <h5 class="card-title">Total Magazines</h5>
-                        <h2>{{ $magazineCount }}</h2>
+                        <h2>{{ $countMagazines }}</h2>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-warning text-white">
+                <div class="card bg-primary text-white">
                     <div class="card-body">
                         <h5 class="card-title">Total Orders</h5>
-                        <h2>{{ $orderCount }}</h2>
+                        <h2>{{ $countOrders }}</h2>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card bg-info text-white">
+                <div class="card bg-primary text-white">
                     <div class="card-body">
                         <h5 class="card-title">Total Categories</h5>
-                        <h2>{{ $categoryCount }}</h2>
+                        <h2>{{ $countCategories }}</h2>
                     </div>
                 </div>
             </div>
@@ -53,7 +53,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Orders Over Time</h5>
+                        <h5>Orders Over Time(Pesanan)</h5>
                     </div>
                     <div class="card-body">
                         <canvas id="ordersChart"></canvas>
@@ -63,7 +63,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h5>User Registrations</h5>
+                        <h5>User Registrations(Terdaftar)</h5>
                     </div>
                     <div class="card-body">
                         <canvas id="usersChart"></canvas>
@@ -74,10 +74,17 @@
 
         <!-- Pie Chart -->
         <div class="row mb-4">
-            <div class="col-md-6">
+            <div class="col-md-6" style="width: 30
+
+
+
+
+
+
+            rem;">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Magazines by Category</h5>
+                        <h5>Magazines Category(Kategori Item)</h5>
                     </div>
                     <div class="card-body">
                         <canvas id="categoriesChart"></canvas>
@@ -91,12 +98,14 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
-                            <a href="{{ route('admin.users.index') }}" class="btn btn-outline-primary">Manage Users</a>
-                            <a href="{{ route('admin.magazines.index') }}" class="btn btn-outline-success">Manage Magazines</a>
+                            <a href="{{ route('admin.users.index') }}" class="btn btn-outline-info">Manage Users</a>
+                            <a href="{{ route('admin.magazines.index') }}" class="btn btn-outline-info">Manage
+                                Magazines</a>
                             <a href="{{ route('admin.books.index') }}" class="btn btn-outline-info">Manage Books</a>
-                            <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-warning">Manage Categories</a>
-                            <a href="{{ route('admin.promos.index') }}" class="btn btn-outline-secondary">Manage Promos</a>
-                            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-dark">View Orders</a>
+                            <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-info">Manage
+                                Categories</a>
+                            <a href="{{ route('admin.promos.index') }}" class="btn btn-outline-info">Manage Promos</a>
+                            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-info">View Orders</a>
                         </div>
                     </div>
                 </div>
@@ -106,78 +115,131 @@
 @endsection
 
 @push('script')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Orders Chart
-        const ordersCtx = document.getElementById('ordersChart').getContext('2d');
-        new Chart(ordersCtx, {
-            type: 'line',
-            data: {
-                labels: @json($months),
-                datasets: [{
-                    label: 'Orders',
-                    data: @json($orderCounts),
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+    <script>
+        let labelMonths = null;
+        let dataOrders = null;
+        let dataUsers = null;
+        let labelCategories = null;
+        let dataCategories = null;
+
+        $(function() {
+
+            // ===== AJAX Orders =====
+            $.ajax({
+                url: "{{ route('admin.charts.orders') }}",
+                method: "GET",
+                success: function(response) {
+                    labelMonths = response.months;
+                    dataOrders = response.orderCounts;
+                    showOrdersChart();
+                },
+                error: function() {
+                    alert("Gagal mengambil data orders!");
+                }
+            });
+
+            // ===== AJAX Users =====
+            $.ajax({
+                url: "{{ route('admin.charts.users') }}",
+                method: "GET",
+                success: function(response) {
+                    dataUsers = response.userCounts;
+                    showUsersChart();
+                },
+                error: function() {
+                    alert("Gagal mengambil data users!");
+                }
+            });
+
+            // ===== AJAX Categories =====
+            $.ajax({
+                url: "{{ route('admin.charts.categories') }}",
+                method: "GET",
+                success: function(response) {
+                    labelCategories = response.labels;
+                    dataCategories = response.data;
+                    showCategoriesChart();
+                },
+                error: function() {
+                    alert("Gagal mengambil data categories!");
+                }
+            });
+
+        });
+        // ====== ORDERS CHART =======
+        function showOrdersChart() {
+            const ctx = document.getElementById('ordersChart');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labelMonths,
+                    datasets: [{
+                        label: 'Orders',
+                        data: dataOrders,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+        // ======= USERS CHART =======
+        function showUsersChart() {
+            const ctx = document.getElementById('usersChart');
 
-        // Users Chart
-        const usersCtx = document.getElementById('usersChart').getContext('2d');
-        new Chart(usersCtx, {
-            type: 'bar',
-            data: {
-                labels: @json($months),
-                datasets: [{
-                    label: 'New Users',
-                    data: @json($userCounts),
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labelMonths,
+                    datasets: [{
+                        label: 'New Users',
+                        data: dataUsers,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+        //  ======= CATEGORIES CHART ======
+        function showCategoriesChart() {
+            const ctx = document.getElementById('categoriesChart');
 
-        // Categories Chart
-        const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
-        new Chart(categoriesCtx, {
-            type: 'doughnut',
-            data: {
-                labels: @json($categoryLabels),
-                datasets: [{
-                    data: @json($categoryData),
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)',
-                        'rgb(75, 192, 192)',
-                        'rgb(153, 102, 255)'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true
-            }
-        });
-    });
-</script>
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labelCategories,
+                    datasets: [{
+                        data: dataCategories,
+                        backgroundColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)',
+                            'rgb(75, 192, 192)',
+                            'rgb(153, 102, 255)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+    </script>
 @endpush
-

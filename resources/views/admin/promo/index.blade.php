@@ -90,49 +90,50 @@
                 </tbody>
             </table>
         </div>
-    @endsection
+    </div>
+@endsection
 
-    @push('script')
-        <script>
-            $(function() {
-                $('#promosTable').DataTable({
-                    processing: true,
-                    //data untuk datatable diproses secara serverside (controller)
-                    serverSide: true,
-                    //routing menuju fungsi yang memproses data untuk datatable
-                    ajax: "{{ route('admin.promos.datatables') }}",
-                    //urutan column (td), pastikan urutan sesuai th
-                    //data: 'nama' -> nama diambil dari rawColumn jika addColumn, atau field dari model fillable
-                    columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'promo_code',
-                            name: 'promo_code'
-                        },
-                        {
-                            data: 'discount',
-                            name: 'discount',
-                        },
-                        {
-                            data: 'type',
-                            name: 'type',
-                        },
-                        {
-                            data: 'activated',
-                            name: 'activated',
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
-                    ]
-                });
+@push('script')
+    <script>
+        $(function() {
+            $('#promosTable').DataTable({
+                processing: true,
+                //data untuk datatable diproses secara serverside (controller)
+                serverSide: true,
+                //routing menuju fungsi yang memproses data untuk datatable
+                ajax: "{{ route('admin.promos.datatables') }}",
+                //urutan column (td), pastikan urutan sesuai th
+                //data: 'nama' -> nama diambil dari rawColumn jika addColumn, atau field dari model fillable
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'promo_code',
+                        name: 'promo_code'
+                    },
+                    {
+                        data: 'discount',
+                        name: 'discount',
+                    },
+                    {
+                        data: 'type',
+                        name: 'type',
+                    },
+                    {
+                        data: 'activated',
+                        name: 'activated',
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ]
             });
-        </script>
-    @endpush
+        });
+    </script>
+@endpush

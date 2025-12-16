@@ -32,5 +32,8 @@ class Magazine extends Model
         return Str::words($this->title, 2, '...');
     }
 
-
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'magazine_categories');
+    }
 }

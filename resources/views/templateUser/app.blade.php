@@ -137,9 +137,9 @@
     @yield('content')
     <!-- MDB -->
 
-    <section class="mt-5 border-top border-2 ">
+    <section class="mt-5 border-top border-2">
         <!-- Footer -->
-        <footer class="bg-body-tertiary">
+        <footer class="bg-body-tertiary ">
             <div class="p-1 w-100 container d-flex justify-content-between" style="">
                 <img src="{{ asset('images/skymagz.png') }}" alt="" class=""
                     style="width: 7rem; !important;">

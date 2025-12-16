@@ -90,8 +90,10 @@
             <div class="d-flex justify-content-center border border-4 border-primary w-25 pt-2"
                 style="border-radius: 5rem;">
                 <h5 class="text-dark fw-bold  align-items-center">
-                    <i class="fa-solid fa-book-open mx-1 text-primary"></i>Kategori
-                    <iclass="fa-solid fa-book-open mx-1 text-primary"></iclass=></h5>
+                    <i class="fa-solid fa-book-open mx-1 text-primary"></i>
+                        Kategori
+                    <i class="fa-solid fa-book-open mx-1 text-primary"></i>
+                </h5>
             </div>
         </div>
 

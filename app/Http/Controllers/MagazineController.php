@@ -25,6 +25,12 @@ class MagazineController extends Controller
         return view('admin.magazine.index', compact('magazines'));
     }
 
+    public function dashboard()
+    {
+        $countMagazine = Magazine::count();
+        return view('admin.dashboard', compact('countMagazine'));
+    }
+
 
     public function bookIndex()
     {
@@ -268,19 +274,6 @@ class MagazineController extends Controller
     // ============================
     // EXPORT
     // ============================
-
-    public function export(Request $request)
-    {
-        $type = $request->input('type');
-
-        if ($type === 'majalah') {
-            return Excel::download(new MagazineExport, 'data-Majalah.xlsx');
-        } elseif ($type === 'buku') {
-            return Excel::download(new BookExport, 'data-Buku.xlsx');
-        } else {
-            return back()->with('error', 'Tipe tidak diketahui!');
-        }
-    }
 
     // ============================
     // TRASH / RESTORE

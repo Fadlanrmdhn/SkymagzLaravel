@@ -9,7 +9,7 @@
                 <h4 class="alert-heading">
                     <i class="bi bi-check-circle"></i> Pesanan Berhasil Dibuat!
                 </h4>
-                <p class="mb-0">Silakan lakukan pembayaran untuk melanjutkan proses pengiriman.</p>
+                <p class="mb-0">Silakan lakukan pembayaran untuk melanjutkan proses pembelian.</p>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
@@ -67,8 +67,7 @@
                                     foreach($order->orderDetails as $detail) {
                                         $subtotal += $detail->total_price;
                                     }
-                                    // Prefer stored promo_amount when available, fallback to computed difference
-                                    $discount = isset($order->promo_amount) ? $order->promo_amount : ($subtotal - $order->total_amount);
+                                    $discount = $subtotal - $order->total_amount;
                                 @endphp
                                 <tr class="border-top">
                                     <td colspan="3" class="text-end">Subtotal:</td>

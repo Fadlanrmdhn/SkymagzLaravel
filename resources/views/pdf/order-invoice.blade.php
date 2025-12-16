@@ -272,8 +272,7 @@
                         foreach($order->orderDetails as $d) {
                             $subtotal += $d->total_price;
                         }
-                        // Prefer explicit promo_amount if available
-                        $discount = isset($order->promo_amount) ? $order->promo_amount : ($subtotal - $order->total_amount);
+                        $discount = $subtotal - $order->total_amount;
                     @endphp
                     <div class="summary-row">
                         <span>Subtotal:</span>

@@ -76,10 +76,11 @@
                             <td class="text-end">{{ $order->promo->promo_code }}</td>
                         </tr>
                     @endif
-                    @if($order->promo_amount > 0)
+                    @php $discount = $subtotal - $order->total_amount; @endphp
+                    @if($discount > 0)
                         <tr>
                             <td colspan="3" class="text-end text-danger">Diskon:</td>
-                            <td class="text-end text-danger">-Rp {{ number_format($order->promo_amount,0,',','.') }}</td>
+                            <td class="text-end text-danger">-Rp {{ number_format($discount,0,',','.') }}</td>
                         </tr>
                     @endif
                     <tr class="fw-bold">

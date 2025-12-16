@@ -92,6 +92,9 @@
     {{-- DataTable CDN --}}
     <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
 
+    {{-- CDN ChartJS --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         @if (session('success'))
             Swal.fire({
